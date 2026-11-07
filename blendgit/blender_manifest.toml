@@ -1,14 +1,14 @@
 schema_version = "1.0.0"
 
 id = "blendgit"
-version = "1.0.0"
+version = "2.0.0"
 name = "BlendGit"
 tagline = "Git versioning, branches and GitHub push for .blend files"
 maintainer = "Gnottero <gnotterodev@gmail.com>"
 type = "add-on"
 tags = ["System", "Development"]
 
-blender_version_min = "4.2.0"
+blender_version_min = "5.0.0"
 license = ["SPDX:GPL-3.0-or-later"]
 
 [permissions]

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="BlendGit logo">
+  <title>BlendGit</title>
+  <mask id="cube">
+    <path d="M256 44 439 150V362L256 468 73 362V150Z" fill="#fff" stroke="#fff" stroke-width="28" stroke-linejoin="round"/>
+  </mask>
+  <g mask="url(#cube)">
+    <path d="M256 0 512 150 256 256 0 150Z" fill="#FFA63D"/>
+    <path d="M0 150 256 256V512H0Z" fill="#E8730C"/>
+    <path d="M512 150 256 256V512H512Z" fill="#B34E06"/>
+  </g>
+  <path d="M256 416V256M256 256 118 176M256 256 394 176" fill="none" stroke="#fff" stroke-width="30" stroke-linecap="round"/>
+  <g fill="#fff">
+    <circle cx="256" cy="416" r="38"/>
+    <circle cx="256" cy="256" r="38"/>
+    <circle cx="118" cy="176" r="38"/>
+    <circle cx="394" cy="176" r="38"/>
+  </g>
+</svg>
