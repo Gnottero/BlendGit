@@ -156,6 +156,10 @@ assert bpy.context.scene.camera is None
 blendgit.commit("deleted the camera")
 bpy.ops.bgit.rollback(rev="HEAD^", code="OB", block_name="Camera")
 assert bpy.context.scene.camera == bpy.data.objects["Camera"], "a restored camera must be the scene camera again"
+assert [c.name for c in bpy.data.objects["Camera"].users_collection] == ["Collection"], \
+    "a restored object must go back to its collection"
+assert not bpy.data.libraries and len(bpy.data.objects) == 4 and len(bpy.data.collections) == 1, \
+    "looking up the collection left data behind"
 blendgit.commit("camera is back")
 
 cached = blendgit.extract("HEAD")

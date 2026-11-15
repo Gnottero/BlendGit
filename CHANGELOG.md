@@ -17,6 +17,7 @@ All notable changes to BlendGit are listed here. Versions follow the rules in th
 ### Fixed
 - Switch and Restore refuse to run when saved work has not been committed.
 - Rolling back a deleted camera makes it the scene camera again.
+- Rolling back a deleted object puts it back in the collections it was in, if they still exist.
 - Preview opens a copy and no longer asks to save on close, so edits made in a preview cannot change what rollbacks restore.
 
 ### Security

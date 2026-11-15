@@ -333,6 +333,28 @@ def version_changes(sha):
     return sorted(changes, key=lambda change: (change[0] != "OB", change[1]))
 
 
+def libraries_of(path):
+    return [library for library in bpy.data.libraries
+            if os.path.realpath(bpy.path.abspath(library.filepath)) == os.path.realpath(path)]
+
+
+##
+# Find the collections an object was in, in an old version.
+#
+# @param path path of the old .blend
+# @param name the object name
+# @return the collection names, empty if it was only in the scene collection
+def old_collections(path, name):
+    # links every collection of the old version just to read membership, which loads
+    # the whole old scene. Parse the collection pieces instead if this gets slow on big files.
+    with bpy.data.libraries.load(path, link=True) as (old, new):
+        new.collections = old.collections
+    names = [collection.name for collection in new.collections
+             if any(member.name == name for member in collection.objects)]
+    bpy.data.batch_remove(libraries_of(path))
+    return names
+
+
 ##
 # Bring one datablock back from an old version, leaving everything else alone.
 #
@@ -388,9 +410,7 @@ def roll_back(rev, code, name):
                 if copy.name.startswith(block.name):
                     copy.user_remap(block)
                     unused.append(copy)
-        unused += [library for library in bpy.data.libraries
-                   if os.path.realpath(bpy.path.abspath(library.filepath)) == os.path.realpath(path)]
-        bpy.data.batch_remove(unused)
+        bpy.data.batch_remove(unused + libraries_of(path))
         aside = [entry for entry in aside if entry[1] not in unused]
     finally:
         for _, block, old_name in aside:
@@ -399,7 +419,9 @@ def roll_back(rev, code, name):
     if code == "OB":
         scene = bpy.context.scene
         if not restored.users_collection:
-            scene.collection.objects.link(restored)
+            homes = [bpy.data.collections.get((home, None)) for home in old_collections(path, name)]
+            for collection in [home for home in homes if home] or [scene.collection]:
+                collection.objects.link(restored)
         if restored.type == 'CAMERA' and scene.camera is None:
             scene.camera = restored
 
