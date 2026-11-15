@@ -316,21 +316,31 @@ def manifest_at(rev):
 
 
 ##
-# List the datablocks a commit touched.
+# List the datablocks that can be rolled back to a commit.
+#
+# These are the ones the commit touched, plus the ones that changed between it and the last commit:
+# an item moved in a later commit is not something the older commit touched.
 #
 # @param sha the commit hash
 # @return list of (type code, name, git status, version to roll back to), objects first
 def version_changes(sha):
     folder = f"{BLOCKS_DIR}/{blend_stem()}"
-    output = git("diff-tree", "-r", "-z", "--root", "--no-commit-id", "--name-status", "--no-renames",
-                 sha, "--", folder).split("\0")
-    known = {**manifest_at(f"{sha}^"), **manifest_at(sha)}
-    changes = []
-    for status, path in zip(output[::2], output[1::2]):
-        code, name = known.get(path[len(folder) + 1:], ("", ""))
-        if code in ROLLBACK_TYPES:
-            changes.append((code, name, status, f"{sha}^" if status == "D" else sha))
-    return sorted(changes, key=lambda change: (change[0] != "OB", change[1]))
+    known = {**manifest_at("HEAD"), **manifest_at(f"{sha}^"), **manifest_at(sha)}
+
+    def diff(*revs):
+        output = git("diff-tree", "-r", "-z", "--root", "--no-commit-id", "--name-status", "--no-renames",
+                     *revs, "--", folder).split("\0")
+        for status, path in zip(output[::2], output[1::2]):
+            code, name = known.get(path[len(folder) + 1:], ("", ""))
+            if code in ROLLBACK_TYPES:
+                yield code, name, status
+
+    changes = {(code, name): (status, f"{sha}^" if status == "D" else sha) for code, name, status in diff(sha)}
+    for code, name, status in diff(sha, "HEAD"):
+        if status != "A":
+            changes[code, name] = (status, sha)
+    return sorted(((code, name, *change) for (code, name), change in changes.items()),
+                  key=lambda change: (change[0] != "OB", change[1]))
 
 
 def libraries_of(path):
@@ -817,7 +827,7 @@ class VIEW3D_PT_blendgit(bpy.types.Panel):
             row.prop(s, "new_branch", text="", placeholder="New branch name")
             row.operator("bgit.branch", text="Branch from here").from_selected = True
             if s.changes:
-                box.label(text="Changed in this version")
+                box.label(text="Changed in or since this version")
                 box.template_list("BGIT_UL_changes", "", s, "changes", s, "change_index", rows=4)
 
         box = layout.box()

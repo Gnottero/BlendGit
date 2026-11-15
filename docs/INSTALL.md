@@ -49,9 +49,9 @@ Click **Create Versioned Project**, give it a name and a location, and click **C
 
 BlendGit makes a new folder, copies your model and every file it uses into it, and records the first version. Your original files stay where they are.
 
-From now on, write a message and click **Commit** whenever you want to save a version. Pick a version in **History** to see what changed in it. The arrow next to an item rolls back only that item:
+From now on, write a message and click **Commit** whenever you want to save a version. Pick a version in **History** to see what changed in it or since it. The arrow next to an item rolls back only that item:
 
-![The BlendGit panel with the history and the Changed in this version list](images/use-2-history.png)
+![The BlendGit panel with the history and the list of changed items](images/use-2-history.png)
 
 ## Opening a project from GitHub
 

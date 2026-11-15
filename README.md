@@ -12,8 +12,8 @@ The [install guide](docs/INSTALL.md) has every step with pictures.
 ## Use
 - Click **Create Versioned Project**, type a name, and pick a location. BlendGit creates the folder, copies in every file the scene uses (textures, sounds, fonts, movies, caches, linked libraries), saves the model as `<name>.blend` and starts versioning. Your original files are left untouched.
 - **Commit**: write a message and click Commit. This saves the file and records the version.
-- **History**: select a version to see its thumbnail and what changed in it. **Preview** (eye icon) opens it in a second Blender window without touching your file. **Restore** rolls the whole model back as a new commit, so nothing is lost.
-- **Changed in this version**: the arrow next to an item rolls back only that item, and everything else stays as it is. An object brings its mesh with it, and deleted objects come back too. Commit afterwards to keep the result, or undo.
+- **History**: select a version to see its thumbnail and what changed in it or since it. **Preview** (eye icon) opens it in a second Blender window without touching your file. **Restore** rolls the whole model back as a new commit, so nothing is lost.
+- **Changed in or since this version**: the arrow next to an item brings only that item back to how it was in the selected version, and everything else stays as it is. An object brings its mesh with it, and deleted objects come back too. Commit afterwards to keep the result, or undo.
 - **Branches**: preview, switch, or create branches. "Branch from here" starts a branch from the selected version.
 - **GitHub**: create an empty repository on github.com, paste its URL, and click **Push**. You sign in through Git's usual login (the browser opens on Windows/macOS).
 - **Open Cloned Project**: rebuilds the `.blend` of a project you cloned from GitHub, and opens it.

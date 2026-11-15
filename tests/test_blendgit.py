@@ -162,6 +162,18 @@ assert not bpy.data.libraries and len(bpy.data.objects) == 4 and len(bpy.data.co
     "looking up the collection left data behind"
 blendgit.commit("camera is back")
 
+bpy.data.objects["Light"].location.z = 40
+blendgit.commit("light moved")
+blendgit.refresh()
+s().index = 1
+light = [c for c in s().changes if (c.code, c.name) == ("OB", "Light")]
+assert light, "an item changed by a later version must be listed, so it can be rolled back"
+bpy.ops.bgit.rollback(rev=light[0].rev, code="OB", block_name="Light")
+assert bpy.data.objects["Light"].location.z != 40
+s().index = 0
+assert ("OB", "Camera") not in [(c.code, c.name) for c in s().changes], "unchanged items must not be listed"
+blendgit.commit("light back")
+
 cached = blendgit.extract("HEAD")
 before = open(cached, "rb").read()
 command = blendgit.preview_command(cached)

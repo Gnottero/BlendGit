@@ -10,7 +10,7 @@ All notable changes to BlendGit are listed here. Versions follow the rules in th
 - The version cache is now private to each Blender session.
 
 ### Added
-- "Changed in this version" list, with a rollback arrow for each item.
+- "Changed in or since this version" list, with an arrow for each item that rolls it back to the selected version.
 - Open Cloned Project, which rebuilds the `.blend` of a project cloned from GitHub.
 - Install guide with screenshots, and a logo.
 
