@@ -40,6 +40,8 @@ ROLLBACK_TYPES = {
     "AC": ("actions", 'ACTION'),
 }
 ROLLBACK_SKIP = {"libraries", "screens", "workspaces"}
+PREVIEW_SETUP = ("import bpy; p = bpy.context.preferences; "
+                 "p.use_preferences_save = False; p.view.use_save_prompt = False")
 _previews = None
 _branch_items = []
 
@@ -274,6 +276,21 @@ def extract(rev):
 
 
 ##
+# Build the command that opens a version in a throwaway Blender.
+#
+# It opens a copy, as rollbacks and thumbnails read the cached file and a save in the preview must
+# not change it. The preview never asks to save, and never writes that choice to the preferences.
+#
+# @param path path of the cached .blend, from extract()
+# @return the command line
+def preview_command(path):
+    folder, name = os.path.split(path)
+    copy = os.path.join(folder, f"{os.path.splitext(name)[0]} (preview {os.path.basename(folder)[:7]}).blend")
+    shutil.copyfile(path, copy)
+    return [bpy.app.binary_path, copy, "--python-expr", PREVIEW_SETUP]
+
+
+##
 # Load the thumbnail of a version, if it is not loaded yet.
 #
 # @param sha the commit hash
@@ -379,8 +396,12 @@ def roll_back(rev, code, name):
         for _, block, old_name in aside:
             block.name = old_name
 
-    if code == "OB" and not restored.users_collection:
-        bpy.context.scene.collection.objects.link(restored)
+    if code == "OB":
+        scene = bpy.context.scene
+        if not restored.users_collection:
+            scene.collection.objects.link(restored)
+        if restored.type == 'CAMERA' and scene.camera is None:
+            scene.camera = restored
 
 
 def state():
@@ -608,7 +629,7 @@ class BGIT_OT_preview(GitOp, bpy.types.Operator):
     rev: StringProperty()
 
     def run(self, context):
-        subprocess.Popen([bpy.app.binary_path, extract(self.rev)])
+        subprocess.Popen(preview_command(extract(self.rev)))
         return "Opening preview…"
 
 

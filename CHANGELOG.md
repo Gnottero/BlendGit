@@ -16,6 +16,8 @@ All notable changes to BlendGit are listed here. Versions follow the rules in th
 
 ### Fixed
 - Switch and Restore refuse to run when saved work has not been committed.
+- Rolling back a deleted camera makes it the scene camera again.
+- Preview opens a copy and no longer asks to save on close, so edits made in a preview cannot change what rollbacks restore.
 
 ### Security
 - Manifests that point outside the project or repeat a piece are rejected.

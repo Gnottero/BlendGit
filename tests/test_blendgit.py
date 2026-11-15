@@ -151,6 +151,19 @@ bpy.ops.bgit.rollback(rev=deleted.rev, code="OB", block_name="Light")
 assert bpy.data.objects["Light"].name in bpy.context.scene.collection.all_objects
 blendgit.commit("light is back")
 
+bpy.data.objects.remove(bpy.data.objects["Camera"])
+assert bpy.context.scene.camera is None
+blendgit.commit("deleted the camera")
+bpy.ops.bgit.rollback(rev="HEAD^", code="OB", block_name="Camera")
+assert bpy.context.scene.camera == bpy.data.objects["Camera"], "a restored camera must be the scene camera again"
+blendgit.commit("camera is back")
+
+cached = blendgit.extract("HEAD")
+before = open(cached, "rb").read()
+command = blendgit.preview_command(cached)
+assert command[1] != cached and os.path.dirname(command[1]) == os.path.dirname(cached), "preview must open a copy"
+assert open(command[1], "rb").read() == before and blendgit.PREVIEW_SETUP in command
+
 clone = os.path.join(root, "clone")
 subprocess.run(["git", "clone", "-q", d, clone], check=True)
 assert not os.path.exists(os.path.join(clone, "My Car.blend"))
