@@ -2,7 +2,7 @@
 
 All notable changes to BlendGit are listed here. Versions follow the rules in the [README](README.md#versioning).
 
-## [2.0.0] - Unreleased
+## [2.0.0] - 2026-11-15
 
 ### Changed
 - **Breaking:** projects are stored as one file per datablock under `blocks/<name>/`, and the `.blend` is no longer tracked. Commits and pushes only carry what changed. Projects from 1.0 convert on their next commit, and must then be opened with 2.0 or newer.
